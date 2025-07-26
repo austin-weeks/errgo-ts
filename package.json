@@ -1,0 +1,16 @@
+{
+  "name": "errgo-ts",
+  "version": "0.0.1",
+  "author": {
+    "name": "Austin Weeks",
+    "url": "https://github.com/austin-weeks"
+  },
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "build": "tsc"
+  },
+  "devDependencies": {
+    "typescript": "~5.8.3"
+  }
+}
