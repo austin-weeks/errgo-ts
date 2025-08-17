@@ -8,9 +8,22 @@
   "license": "MIT",
   "type": "module",
   "scripts": {
-    "build": "tsc"
+    "lint": "eslint . ",
+    "test": "vitest run --coverage --reporter verbose",
+    "test:watch": "vitest watch --coverage",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "build": "tsc",
+    "local-ci": "pnpm i && pnpm run format:check && pnpm run lint && pnpm run test && pnpm run build"
   },
   "devDependencies": {
-    "typescript": "~5.8.3"
+    "@eslint/js": "^9.33.0",
+    "@vitest/coverage-v8": "3.2.4",
+    "eslint": "^9.33.0",
+    "jiti": "^2.5.1",
+    "prettier": "^3.6.2",
+    "typescript": "~5.8.3",
+    "typescript-eslint": "^8.39.1",
+    "vitest": "^3.2.4"
   }
 }
