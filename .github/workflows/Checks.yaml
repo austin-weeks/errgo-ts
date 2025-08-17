@@ -1,0 +1,42 @@
+name: Checks
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  Run-Checks:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+
+      - name: Install pnpm
+        run: npm install -g pnpm
+
+      - name: Install Dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Validate Formatting
+        run: pnpm run format:check
+
+      - name: Check Linting
+        run: pnpm run lint
+
+      - name: Check for Print Statements
+        run: |
+          if grep -r "console\.log" src; then
+            echo "\033[01;31mconsole.log() statements found in codebase."
+            exit 1
+          fi
+
+      - name: Validate Build
+        run: pnpm run build
