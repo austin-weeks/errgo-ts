@@ -1,4 +1,4 @@
-[![Tests](https://github.com/austin-weeks/errgo-ts/actions/workflows/Tests.yml/badge.svg)](https://github.com/austin-weeks/errgo-ts/actions/workflows/Tests.yml)
+[![Tests](https://github.com/austin-weeks/errgo-ts/actions/workflows/Tests.yaml/badge.svg)](https://github.com/austin-weeks/errgo-ts/actions/workflows/Tests.yaml)
 
 # ↫ ErrGo
 
