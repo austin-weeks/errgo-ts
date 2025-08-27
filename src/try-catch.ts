@@ -13,7 +13,7 @@ import { ensureError } from "./utils";
  * @returns `{ err: Error }` if `action` throws, else `{ val: T }`
  * @example
  * // Synchronous usage
- * const res = tryCatch(() => fs.readFileSync(myFile));
+ * const res = tryCatch(() => fs.readFileSync(myFile, "utf-8"));
  *
  * // Async usage
  * const res = await tryCatch(() => fetch("/data"));
