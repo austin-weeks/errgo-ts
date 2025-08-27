@@ -1,10 +1,23 @@
 {
   "name": "errgo-ts",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "author": {
     "name": "Austin Weeks",
     "url": "https://github.com/austin-weeks"
   },
+  "description": "A lightweight error handling library inspired by Go and Rust.",
+  "keywords": [
+    "error",
+    "errors",
+    "result",
+    "go",
+    "rust",
+    "try",
+    "catch",
+    "error handling"
+  ],
+  "homepage": "https://github.com/austin-weeks/errgo-ts",
+  "repository": "github:austin-weeks/errgo-ts",
   "license": "MIT",
   "type": "module",
   "main": "dist/index.js",
@@ -27,7 +40,8 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "build": "tsc",
-    "local-ci": "pnpm i && pnpm run format:check && pnpm run lint && pnpm run test && pnpm run build"
+    "local-ci": "pnpm i && pnpm run format:check && pnpm run lint && pnpm run test && pnpm run build",
+    "prepublishOnly": "pnpm run format:check && pnpm run test && pnpm run build"
   },
   "devDependencies": {
     "@eslint/js": "^9.33.0",
