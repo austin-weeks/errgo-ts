@@ -16,7 +16,6 @@
     "catch",
     "error handling"
   ],
-  "homepage": "https://github.com/austin-weeks/errgo-ts",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/austin-weeks/errgo-ts.git"
