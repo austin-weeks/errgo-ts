@@ -1,7 +1,7 @@
-import { propagateError } from "./propagate-error";
-import { tryCatch } from "./try-catch";
-import type { Result } from "./types";
-import { ensureError } from "./utils";
+import { propagateError } from "./propagate-error.js";
+import { tryCatch } from "./try-catch.js";
+import type { Result } from "./types.js";
+import { ensureError } from "./utils.js";
 
 export { ensureError, propagateError, tryCatch };
 
