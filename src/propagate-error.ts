@@ -1,4 +1,4 @@
-import { ensureError } from "./utils";
+import { ensureError } from "./utils.js";
 
 /**
  * Executes a provided action, catching and re-throwing any errors with the provided additional context.
@@ -18,7 +18,7 @@ import { ensureError } from "./utils";
  *   throw new Error("Failed to get data", { cause: e });
  * }
  *
- * // Use propagateError for more declarative code!
+ * // ...use propagateError for more declarative code
  * const data = propagateError("Failed to get data", () => {
  *   return getData();
  * });

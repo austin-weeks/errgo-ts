@@ -1,5 +1,5 @@
-import type { NotPromise, Result } from "./types";
-import { ensureError } from "./utils";
+import type { NotPromise, Result } from "./types.js";
+import { ensureError } from "./utils.js";
 
 /**
  * Executes the provided function, returning a `Result` object containing either the functions's
