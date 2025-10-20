@@ -1,6 +1,6 @@
 {
   "name": "errgo-ts",
-  "version": "0.1.2",
+  "version": "0.2.2",
   "author": {
     "name": "Austin Weeks",
     "url": "https://github.com/austin-weeks"
@@ -10,13 +10,14 @@
     "error",
     "errors",
     "result",
+    "defer",
     "go",
     "rust",
     "try",
     "catch",
-    "error handling"
+    "error handling",
+    "resource cleanup"
   ],
-  "homepage": "https://github.com/austin-weeks/errgo-ts",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/austin-weeks/errgo-ts.git"
@@ -37,23 +38,23 @@
     }
   },
   "scripts": {
-    "lint": "eslint . ",
+    "lint": "eslint . --ignore-pattern 'dist/**' --ignore-pattern 'test-build.js'",
     "test": "vitest run --coverage --reporter verbose",
     "test:watch": "vitest watch --coverage",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "build": "tsc",
     "local-ci": "pnpm i && pnpm run format:check && pnpm run lint && pnpm run test && pnpm run build",
-    "prepublishOnly": "pnpm run format:check && pnpm run test && pnpm run build"
+    "prepublishOnly": "pnpm run format:check && pnpm run test && pnpm run build && node test-build.js"
   },
   "devDependencies": {
-    "@eslint/js": "^9.33.0",
+    "@eslint/js": "^9.38.0",
     "@vitest/coverage-v8": "3.2.4",
-    "eslint": "^9.33.0",
-    "jiti": "^2.5.1",
+    "eslint": "^9.38.0",
+    "jiti": "^2.6.1",
     "prettier": "^3.6.2",
     "typescript": "~5.8.3",
-    "typescript-eslint": "^8.39.1",
+    "typescript-eslint": "^8.46.1",
     "vitest": "^3.2.4"
   }
 }

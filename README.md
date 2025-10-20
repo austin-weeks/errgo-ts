@@ -9,9 +9,9 @@ _Forgo your error woes with ErrGo's ergonomic error handling!_
 
 # ErrGo
 
-A lightweight, drop-in TypeScript library for ergonomic error handling, inspired by Go and Rust.
+A lightweight TypeScript library for ergonomic error handling, inspired by Go and Rust.
 
-ErrGo works harmoniously with TypeScript's built-in error handling, addressing its pain points and rough edges. It does _not_ try to ban exceptions or try/catch blocks from your codebase.
+Offers [error handling utilities](#error-handling-utilities) and introduces the [`defer` keyword from Go](#scope---execute-functions-with-deferred-actions).
 
 ## Installation
 
@@ -23,7 +23,7 @@ npm install errgo-ts
 yarn add errgo-ts
 ```
 
-## Features
+## Error Handling Utilities
 
 ### `tryCatch` - Errors-as-values try/catch wrapper
 
@@ -48,14 +48,69 @@ return result.val;
 import { tryCatch } from "errgo-ts";
 
 const result = await tryCatch(async () => {
-  const resp = await fetch("/api/data");
-  const json = await resp.json();
-  return processData(json);
+  const resp = await fetch("/api/users");
+  return await resp.json();
 });
 if (result.err) {
   throw new Error("Could not fetch data", { cause: result.err });
 }
 return result.val;
+```
+
+**Using `tryCatch` for granular error handling:**
+
+```typescript
+import { tryCatch } from "errgo-ts";
+
+const resp = await tryCatch(() => fetch("/api/data"));
+if (resp.err) {
+  throw new Error("Failed to fetch data", { cause: resp.err });
+}
+const json = await tryCatch(() => resp.val.json());
+if (json.err) {
+  throw new Error("Failed to parse response body", { cause: json.err });
+}
+const result = tryCatch(() => processData(json.val));
+if (result.err) {
+  throw new Error("Failed to process data", { cause: result.err });
+}
+return result.val;
+
+// Equivalent granular error handling with try/catch blocks
+let resp;
+try {
+  resp = await fetch("/api/data");
+} catch (e) {
+  throw new Error("Failed to fetch data", { cause: e });
+}
+let json;
+try {
+  json = await resp.json();
+} catch (e) {
+  throw new Error("Failed to parse response body", { cause: e });
+}
+let result;
+try {
+  result = processData(json);
+} catch (e) {
+  throw new Error("Failed to process data", { cause: e });
+}
+return result;
+```
+
+### `coerceError` - No more unknown catches
+
+Guarantee you're working with an Error instance. Handles all the weird ways JavaScript allows throwing non-Error objects.
+
+```typescript
+import { coerceError } from "errgo-ts";
+
+try {
+  throw "i'm throwing a string!";
+} catch (e: unknown) {
+  const error = coerceError(e); // Always returns an Error instance
+  console.error(error.message); // "i'm throwing a string!"
+}
 ```
 
 ### `propagateError` - Declarative error propagation
@@ -81,21 +136,6 @@ import { propagateError } from "errgo-ts";
 const data = propagateError("Failed to get data", () => getData());
 ```
 
-### `ensureError` - No more unknown catches
-
-Guarantee you're working with Error instances, even when catching unknown values. Handles all the weird ways JavaScript allows throwing non-Error objects.
-
-```typescript
-import { ensureError } from "errgo-ts";
-
-try {
-  throw "i'm throwing a string!";
-} catch (e: unknown) {
-  const error = ensureError(e); // Always returns an Error instance
-  console.error(error.message); // "Non-Error object was thrown: i'm throwing a string!"
-}
-```
-
 ### `Result` Type
 
 A discriminated union representing success or failure with full type safety:
@@ -104,79 +144,113 @@ A discriminated union representing success or failure with full type safety:
 type Result<T, E = Error> =
   | { val: T; err?: undefined }
   | { err: E; val?: undefined };
-
-const success: Result = { val: 2 };
-const failure: Result = { err: new Error() };
 ```
 
-## More Information
+```typescript
+import { Result } from "errgo-ts";
 
-### Error Cause Chain Preservation
+const success: Result<number> = { val: 2 };
+const failure: Result<number> = { err: new Error() };
+```
 
-Both `propagateError` and `ensureError` preserve the original error in the cause chain, making debugging much easier:
+## `scope` - Execute functions with deferred actions
+
+Introduces an equivalent to Go's `defer` keyword. Allows you to defer execution of functions until after the enclosing scope completes.
+
+```typescript
+import { scope } from "errgo-ts";
+
+scope.safe((defer) => {
+  defer(() => console.log("This happens last!"));
+  console.log("This happens first!");
+});
+```
+
+The `scope` module provides three execution modes to match different error handling strategies:
+
+### `scope.safe` - Returns a Result object
+
+Wraps errors in a `Result` object for explicit error handling. **Never throws**.
+
+```typescript
+const result = scope.safe((defer) => {
+  console.log("Start");
+  defer(() => console.log("Cleanup 1"));
+  defer(() => console.log("Cleanup 2"));
+  console.log("Doing work...");
+  return "OK";
+});
+if (!result.err) {
+  console.log("Result:", result.val);
+}
+```
+
+**Output:**
+
+```
+Start
+Doing work...
+Cleanup 1
+Cleanup 2
+Result: OK
+```
+
+### `scope.throwing` - Re-throws errors
+
+Returns the executed function's value and re-throws any errors.
 
 ```typescript
 try {
-  const data = propagateError("Failed to get data", () => {
-    throw new Error("Network timeout");
+  const data = scope.throwing((defer) => {
+    console.log("Start");
+    defer(() => console.log("Cleanup 1"));
+    defer(() => console.log("Cleanup 2"));
+    console.log("Doing work...");
+    console.log("Something goes wrong");
+    throw new Error("ERROR");
   });
-} catch (error) {
-  console.log(error.message); // "Failed to get data"
-  console.log(error.cause?.message); // "Network timeout"
+  console.log("Result:", data);
+} catch (e) {
+  console.error("Caught:", e);
 }
 ```
 
-### JavaScript's Error Edge Cases
+**Output:**
 
-ErrGo's `tryCatch` handles edge cases that are not always obvious with traditional try/catch:
-
-```typescript
-// Non-Error throws are safely converted
-const result = tryCatch(() => {
-  throw null;
-  throw undefined;
-  throw "string error";
-  throw { custom: "error object" };
-});
-if (result.err) {
-  console.log(result.err instanceof Error); // true
-}
-
-// Promise rejections are properly coverted to Error instances
-const result = await tryCatch(() => Promise.reject("async error"));
-if (result.err) {
-  console.log(result.err instanceof Error); // true
-}
+```
+Start
+Doing work...
+Something goes wrong
+Cleanup 1
+Cleanup 2
+Caught: ERROR
 ```
 
-### Type-Safe Error Handling
+### `scope.handled` - Calls a provided error handler
 
-The `Result` type leverages TypeScript's type system to force the user to check for an error before using the returned value:
+Executes a provided callback after executing defers if an error occurs. Ideal for cases where you want declarative error handling.
 
 ```typescript
-// { val: number | undefined, err: Error | undefined }
-const result = tryCatch(() => 2);
-
-if (result.err) {
-  // TypeScript knows val is undefined and err is an Error
-  // { val: undefined, err: Error }
-  console.error(result.err.message);
-} else {
-  // TypeScript knows err is undefined and val is a number
-  // { val: number, err: undefined }
-  console.log(result.val + 3);
-}
+scope.handled(
+  (err) => console.error("Error in scope:", err),
+  (defer) => {
+    console.log("Start");
+    defer(() => console.log("Cleanup 1"));
+    defer(() => console.log("Cleanup 2"));
+    console.log("Doing work...");
+    console.log("Something goes wrong");
+    throw new Error("ERROR");
+  }
+);
 ```
 
-### Export Options
+**Output:**
 
-ErrGo provides flexible import options:
-
-```typescript
-// Named imports (recommended)
-import { tryCatch, propagateError, ensureError } from "errgo-ts";
-
-// Default import
-import errgo from "errgo-ts";
-const result = errgo.tryCatch(() => foo());
+```
+Start
+Doing work...
+Something goes wrong
+Cleanup 1
+Cleanup 2
+Error in scope: ERROR
 ```

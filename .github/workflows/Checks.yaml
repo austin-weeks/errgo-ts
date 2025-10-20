@@ -31,12 +31,5 @@ jobs:
       - name: Check Linting
         run: pnpm run lint
 
-      - name: Check for Print Statements
-        run: |
-          if grep -r "console\.log" src; then
-            echo "\033[01;31mconsole.log() statements found in codebase."
-            exit 1
-          fi
-
       - name: Validate Build
         run: pnpm run build

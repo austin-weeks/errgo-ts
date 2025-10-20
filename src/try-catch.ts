@@ -1,5 +1,5 @@
+import { coerceError } from "./coerce-error.js";
 import type { NotPromise, Result } from "./types.js";
-import { ensureError } from "./utils.js";
 
 /**
  * Executes the provided function, returning a `Result` object containing either the functions's
@@ -68,13 +68,13 @@ export function tryCatch<T>(
           val: v,
         }),
         (e) => ({
-          err: ensureError(e),
+          err: coerceError(e),
         })
       );
     } else {
       return { val: result };
     }
   } catch (e: unknown) {
-    return { err: ensureError(e) };
+    return { err: coerceError(e) };
   }
 }
