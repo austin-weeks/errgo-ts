@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { coerceError, propagateError, Result, scope, tryCatch } from "./index";
+import { coerceError, propagateError, Result, safeTry, scope } from "./index";
 
 describe("errgo-ts exports", () => {
   it("should export propagateError", () => {
@@ -10,8 +10,8 @@ describe("errgo-ts exports", () => {
     expect(coerceError).toBeDefined();
   });
 
-  it("should export tryCatch", () => {
-    expect(tryCatch).toBeDefined();
+  it("should export safeTry", () => {
+    expect(safeTry).toBeDefined();
   });
 
   it("should export Result type", () => {

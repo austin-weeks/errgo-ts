@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { safeTry } from "./safe-try";
 import scope from "./scope";
 import { jsTypes } from "./test-helpers";
-import { tryCatch } from "./try-catch";
 
 describe("scope", () => {
   afterEach(() => {
@@ -23,7 +23,7 @@ describe("scope", () => {
     return [
       scope.safe,
       // @ts-expect-error - Fanagle typing
-      (fn) => tryCatch(() => scope.throwing(fn)),
+      (fn) => safeTry(() => scope.throwing(fn)),
       (fn) => scope.handled(() => {}, fn),
     ] as DeferFn<T>[];
   }
@@ -214,7 +214,7 @@ describe("scope", () => {
 
     it("should throw if the sync action throws", () => {
       const error = new Error();
-      const res = tryCatch(() =>
+      const res = safeTry(() =>
         scope.throwing(() => {
           throw error;
         })
@@ -230,7 +230,7 @@ describe("scope", () => {
 
     it("should throw if the async action throws", async () => {
       const error = new Error();
-      const res = await tryCatch(() =>
+      const res = await safeTry(() =>
         scope.throwing(async () => {
           throw error;
         })
@@ -240,7 +240,7 @@ describe("scope", () => {
 
     it("should throw if the async action rejects", async () => {
       const error = new Error();
-      const res = await tryCatch(() => scope.throwing(() => Promise.reject(error)));
+      const res = await safeTry(() => scope.throwing(() => Promise.reject(error)));
       expect(res.err).toBe(error);
     });
   });

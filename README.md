@@ -25,16 +25,16 @@ yarn add errgo-ts
 
 ## Error Handling Utilities
 
-### `tryCatch` - Errors-as-values try/catch wrapper
+### `safeTry` - Errors-as-values try/catch wrapper
 
 Execute functions safely and get structured results instead of throwing errors. Works seamlessly with both synchronous and asynchronous functions.
 
 **Sync Usage:**
 
 ```typescript
-import { tryCatch } from "errgo-ts";
+import { safeTry } from "errgo-ts";
 
-const result = tryCatch(() => fs.readFileSync("file.txt", "utf-8"));
+const result = safeTry(() => fs.readFileSync("file.txt", "utf-8"));
 if (result.err) {
   console.error("Failed to read file:", result.err);
   return "";
@@ -45,9 +45,9 @@ return result.val;
 **Async Usage:**
 
 ```typescript
-import { tryCatch } from "errgo-ts";
+import { safeTry } from "errgo-ts";
 
-const result = await tryCatch(async () => {
+const result = await safeTry(async () => {
   const resp = await fetch("/api/users");
   return await resp.json();
 });
@@ -57,20 +57,20 @@ if (result.err) {
 return result.val;
 ```
 
-**Using `tryCatch` for granular error handling:**
+**Using `safeTry` for granular error handling:**
 
 ```typescript
-import { tryCatch } from "errgo-ts";
+import { safeTry } from "errgo-ts";
 
-const resp = await tryCatch(() => fetch("/api/data"));
+const resp = await safeTry(() => fetch("/api/data"));
 if (resp.err) {
   throw new Error("Failed to fetch data", { cause: resp.err });
 }
-const json = await tryCatch(() => resp.val.json());
+const json = await safeTry(() => resp.val.json());
 if (json.err) {
   throw new Error("Failed to parse response body", { cause: json.err });
 }
-const result = tryCatch(() => processData(json.val));
+const result = safeTry(() => processData(json.val));
 if (result.err) {
   throw new Error("Failed to process data", { cause: result.err });
 }
