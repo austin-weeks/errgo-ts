@@ -1,4 +1,4 @@
-import { ensureError } from "./utils.js";
+import { coerceError } from "./coerce-error.js";
 
 /**
  * Executes a provided action, catching and re-throwing any errors with the provided additional context.
@@ -39,7 +39,7 @@ export function propagateError<T>(
       return result.then(
         (val) => val,
         (e) => {
-          const err = ensureError(e);
+          const err = coerceError(e);
           throw new Error(errorContext, { cause: err });
         }
       );
@@ -47,7 +47,7 @@ export function propagateError<T>(
       return result;
     }
   } catch (e: unknown) {
-    const err = ensureError(e);
+    const err = coerceError(e);
     throw new Error(errorContext, { cause: err });
   }
 }

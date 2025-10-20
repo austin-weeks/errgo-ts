@@ -30,8 +30,3 @@ export type Result<T, E = Error> =
  * Any type that is not a Promise.
  */
 export type NotPromise<T, U = unknown> = T extends Promise<U> ? never : T;
-
-/**
- * Any type that is not void.
- */
-export type NotVoid<T> = T extends void ? never : T;

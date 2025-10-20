@@ -1,27 +1,13 @@
 import { describe, expect, it } from "vitest";
-import errgo, { ensureError, propagateError, Result, tryCatch } from "./index";
+import { coerceError, propagateError, Result, scope, tryCatch } from "./index";
 
 describe("errgo-ts exports", () => {
-  describe("default exports", () => {
-    it("should export propagateError", () => {
-      expect(errgo.propagateError).toBeDefined();
-    });
-
-    it("should export ensureError", () => {
-      expect(errgo.ensureError).toBeDefined();
-    });
-
-    it("should export tryCatch", () => {
-      expect(errgo.tryCatch).toBeDefined();
-    });
-  });
-
   it("should export propagateError", () => {
     expect(propagateError).toBeDefined();
   });
 
-  it("should export ensureError", () => {
-    expect(ensureError).toBeDefined();
+  it("should export coerceError", () => {
+    expect(coerceError).toBeDefined();
   });
 
   it("should export tryCatch", () => {
@@ -29,6 +15,18 @@ describe("errgo-ts exports", () => {
   });
 
   it("should export Result type", () => {
-    const _ = {} as Result<null>;
+    const _: Result<null> = { val: null };
+  });
+
+  it("should export scope.safe", () => {
+    expect(scope.safe).toBeDefined();
+  });
+
+  it("should export scope.throwing", () => {
+    expect(scope.throwing).toBeDefined();
+  });
+
+  it("should export scope.handled", () => {
+    expect(scope.handled).toBeDefined();
   });
 });
