@@ -1,15 +1,9 @@
-import errgo, {
-  coerceError,
-  propagateError,
-  scope,
-  tryCatch,
-} from "./dist/index.js";
+import { coerceError, propagateError, safeTry, scope } from "./dist/index.js";
 
 if (
-  errgo === undefined ||
   coerceError === undefined ||
   propagateError === undefined ||
-  tryCatch === undefined ||
+  safeTry === undefined ||
   scope === undefined ||
   scope.safe === undefined ||
   scope.throwing === undefined ||

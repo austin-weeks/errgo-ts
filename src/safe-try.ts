@@ -13,22 +13,22 @@ import type { NotPromise, Result } from "./types.js";
  * @returns `{ err: Error }` if `action` throws, else `{ val: T }`
  * @example
  * // Synchronous usage
- * const res = tryCatch(() => fs.readFileSync(myFile, "utf-8"));
+ * const res = safeTry(() => fs.readFileSync(myFile, "utf-8"));
  *
  * // Async usage
- * const res = await tryCatch(() => fetch("/data"));
+ * const res = await safeTry(() => fetch("/data"));
  *
  * @example
- * // Using tryCatch for granular error handling
- * const resp = await tryCatch(() => fetch("/api/data"));
+ * // Using safeTry for granular error handling
+ * const resp = await safeTry(() => fetch("/api/data"));
  * if (resp.err) {
  *   throw new Error("Failed to fetch data", { cause: resp.err });
  * }
- * const json = await tryCatch(() => resp.val.json());
+ * const json = await safeTry(() => resp.val.json());
  * if (json.err) {
  *   throw new Error("Failed to parse response body", { cause: json.err });
  * }
- * const result = tryCatch(() => processData(json.val));
+ * const result = safeTry(() => processData(json.val));
  * if (result.err) {
  *   throw new Error("Failed to process data", { cause: result.err });
  * }
@@ -55,9 +55,9 @@ import type { NotPromise, Result } from "./types.js";
  * }
  * return result;
  */
-export function tryCatch<T>(action: () => NotPromise<T>): Result<T>;
-export function tryCatch<T>(action: () => Promise<T>): Promise<Result<T>>;
-export function tryCatch<T>(
+export function safeTry<T>(action: () => NotPromise<T>): Result<T>;
+export function safeTry<T>(action: () => Promise<T>): Promise<Result<T>>;
+export function safeTry<T>(
   action: () => T | Promise<T>
 ): Result<T> | Promise<Result<T>> {
   try {

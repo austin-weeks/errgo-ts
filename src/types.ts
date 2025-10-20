@@ -6,7 +6,7 @@
  *
  * @example
  * // Using a returned Result object
- * const res = tryCatch(() => foo());
+ * const res = safeTry(() => foo());
  * if (res.err) { // case of { err: Error }
  *   console.error(res.err);
  * } else { // case of { val: T }
