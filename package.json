@@ -48,13 +48,13 @@
     "prepublishOnly": "pnpm run format:check && pnpm run test && pnpm run build && node test-build.js"
   },
   "devDependencies": {
-    "@eslint/js": "^9.38.0",
-    "@vitest/coverage-v8": "3.2.4",
-    "eslint": "^9.38.0",
+    "@eslint/js": "^9.39.2",
+    "@vitest/coverage-v8": "4.0.16",
+    "eslint": "^9.39.2",
     "jiti": "^2.6.1",
-    "prettier": "^3.6.2",
-    "typescript": "~5.8.3",
-    "typescript-eslint": "^8.46.1",
-    "vitest": "^3.2.4"
+    "prettier": "^3.7.4",
+    "typescript": "~5.9.3",
+    "typescript-eslint": "^8.51.0",
+    "vitest": "^4.0.16"
   }
 }
