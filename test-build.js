@@ -1,4 +1,4 @@
-import { coerceError, propagateError, safeTry, scope } from "./dist/index.js";
+import { coerceError, propagateError, safeTry, scope } from "errgo-ts";
 
 if (
   coerceError === undefined ||

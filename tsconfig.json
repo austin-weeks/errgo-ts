@@ -2,14 +2,13 @@
   "compilerOptions": {
     "target": "ES2022",
     "useDefineForClassFields": true,
-    "module": "Node16",
+    "module": "esnext",
     "declaration": true,
     "outDir": "./dist",
     "lib": ["ES2022", "DOM", "DOM.Iterable"],
     "skipLibCheck": true,
 
     /* Module Configuration */
-    "moduleResolution": "node16",
     "moduleDetection": "force",
     "noEmit": false,
 

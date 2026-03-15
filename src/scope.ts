@@ -1,5 +1,5 @@
-import { coerceError } from "./coerce-error.js";
-import type { NotPromise, Result } from "./types.js";
+import { coerceError } from "./coerce-error";
+import type { NotPromise, Result } from "./types";
 
 /**
  * Registers a callback for execution after the scope terminates.
