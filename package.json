@@ -33,7 +33,6 @@
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "require": "./dist/index.js",
       "import": "./dist/index.js"
     }
   },
@@ -43,7 +42,7 @@
     "test:watch": "vitest watch --coverage",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "build": "tsc",
+    "build": "tsdown",
     "local-ci": "pnpm i && pnpm run format:check && pnpm run lint && pnpm run test && pnpm run build",
     "prepublishOnly": "pnpm run format:check && pnpm run test && pnpm run build && node test-build.js"
   },
@@ -53,6 +52,7 @@
     "eslint": "^9.39.2",
     "jiti": "^2.6.1",
     "prettier": "^3.7.4",
+    "tsdown": "^0.21.0",
     "typescript": "~5.9.3",
     "typescript-eslint": "^8.51.0",
     "vitest": "^4.0.16"

@@ -5,9 +5,9 @@
 ![Code Coverage](https://img.shields.io/badge/coverage-100%25-dark_green)
 [![Tests](https://github.com/austin-weeks/errgo-ts/actions/workflows/Tests.yaml/badge.svg)](https://github.com/austin-weeks/errgo-ts/actions/workflows/Tests.yaml)
 
-_Forgo your error woes with ErrGo's ergonomic error handling!_
+_Forgo your error woes with errgo's ergonomic error handling!_
 
-# ErrGo
+# `errgo-ts`
 
 A lightweight TypeScript library for ergonomic error handling, inspired by Go and Rust.
 

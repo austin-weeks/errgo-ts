@@ -1,5 +1,5 @@
-import { coerceError } from "./coerce-error.js";
-import type { NotPromise, Result } from "./types.js";
+import { coerceError } from "./coerce-error";
+import type { NotPromise, Result } from "./types";
 
 /**
  * Executes the provided function, returning a `Result` object containing either the functions's

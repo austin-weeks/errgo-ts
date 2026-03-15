@@ -1,4 +1,4 @@
-import { coerceError } from "./coerce-error.js";
+import { coerceError } from "./coerce-error";
 
 /**
  * Executes a provided action, catching and re-throwing any errors with the provided additional context.

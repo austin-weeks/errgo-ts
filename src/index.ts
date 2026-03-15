@@ -1,8 +1,8 @@
-import { coerceError } from "./coerce-error.js";
-import { propagateError } from "./propagate-error.js";
-import { safeTry } from "./safe-try.js";
-import scope from "./scope.js";
-import type { Result } from "./types.js";
+import { coerceError } from "./coerce-error";
+import { propagateError } from "./propagate-error";
+import { safeTry } from "./safe-try";
+import scope from "./scope";
+import type { Result } from "./types";
 
 export { coerceError, propagateError, safeTry, scope };
 
