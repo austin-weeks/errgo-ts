@@ -2,66 +2,46 @@ import { coerceError } from "./coerce-error";
 import type { NotPromise, Result } from "./types";
 
 /**
- * Executes the provided function, returning a `Result` object containing either the functions's
- * return value if successful, or its thrown error if it fails.
+ * Execute a function, returning a `Result` object containing either the function's
+ * return value if successful, or an error if it throws.
  *
- * Provides overloads for both synchronous and asynchronous actions.
+ * Supports both sync and async functions.
  *
- * *This function will ***never*** throw.*
+ * *`safeTry` will ***never*** throw.*
  *
- * @param action - the function to execute that may throw an error
- * @returns `{ err: Error }` if `action` throws, else `{ val: T }`
- * @example
- * // Synchronous usage
- * const res = safeTry(() => fs.readFileSync(myFile, "utf-8"));
- *
- * // Async usage
- * const res = await safeTry(() => fetch("/data"));
+ * @param fn - function to execute
  *
  * @example
- * // Using safeTry for granular error handling
- * const resp = await safeTry(() => fetch("/api/data"));
- * if (resp.err) {
- *   throw new Error("Failed to fetch data", { cause: resp.err });
- * }
- * const json = await safeTry(() => resp.val.json());
- * if (json.err) {
- *   throw new Error("Failed to parse response body", { cause: json.err });
- * }
- * const result = safeTry(() => processData(json.val));
- * if (result.err) {
- *   throw new Error("Failed to process data", { cause: result.err });
- * }
- * return result.val;
  *
- * // Equivalent granular error handling with try/catch blocks
- * let resp;
- * try {
- *   resp = await fetch("/api/data")
- * } catch (e) {
- *   throw new Error("Failed to fetch data", { cause: e });
+ * ## Sync usage
+ *
+ * ```typescript
+ * const res = safeTry(() => thisMightThrow());
+ * if (res.err) {
+ *   console.error("It failed:", res.err);
+ *   return;
  * }
- * let json;
- * try {
- *   json = await resp.json();
- * } catch (e) {
- *   throw new Error("Failed to parse response body", { cause: e });
+ * doSomethingElse(res.val);
+ * ```
+ *
+ * ## Async usage
+ *
+ * ```typescript
+ * const usersRes = await safeTry(() => fetch("/api/users").then((r) => r.json()));
+ * if (usersRes.err) {
+ *   displayErrorMsg("Failed to fetch users");
+ *   return;
  * }
- * let result;
- * try {
- *   result = processData(json);
- * } catch (e) {
- *   throw new Error("Failed to process data", { cause: e });
- * }
- * return result;
+ * doSomethingWithUsers(usersRes.val);
+ * ```
  */
-export function safeTry<T>(action: () => NotPromise<T>): Result<T>;
-export function safeTry<T>(action: () => Promise<T>): Promise<Result<T>>;
+export function safeTry<T>(fn: () => NotPromise<T>): Result<T>;
+export function safeTry<T>(fn: () => Promise<T>): Promise<Result<T>>;
 export function safeTry<T>(
-  action: () => T | Promise<T>
+  fn: () => T | Promise<T>
 ): Result<T> | Promise<Result<T>> {
   try {
-    const result = action();
+    const result = fn();
     if (result instanceof Promise) {
       return result.then(
         (v) => ({

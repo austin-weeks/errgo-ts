@@ -4,23 +4,35 @@
  * `Result` is a discriminated union, meaning that only one property (`val` or `err`)
  * will be present at a time, while the other property is undefined.
  *
- * @example
- * // Using a returned Result object
+ * ## Consuming a `Result`
+ *
+ * ```typescript
  * const res = safeTry(() => foo());
- * if (res.err) { // case of { err: Error }
+ * if (res.err) {
  *   console.error(res.err);
- * } else { // case of { val: T }
+ * } else {
  *   bar(res.val);
  * }
+ * ```
  *
- * // Returning a Result object
- * function divide(a: number, b: number): Result<number> {
+ *
+ * ## Returning a `Result`
+ *
+ * You can also use `Result` as the return type of your own functions and customize the `err` variant:
+ *
+ * ```typescript
+ * type DivisionError = "divide-by-zero" | "negative-divisor";
+ *
+ * function divide(a: number, b: number): Result<number, DivisionError> {
  *   if (b === 0) {
- *     return { err: new Error("Cannot divide by zero") };
- *   } else {
- *     return { val: a / b };
+ *     return { err: "divide-by-zero" };
  *   }
+ *   if (b < 0) {
+ *     return { err: "negative-divisor" };
+ *   }
+ *   return { val: a / b };
  * }
+ * ```
  */
 export type Result<T, E = Error> =
   | { val: T; err?: undefined }

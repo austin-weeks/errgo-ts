@@ -1,14 +1,20 @@
 /**
- * Ensures an unknown value is an `Error` instance, converting it if needed.
+ * Coerce an unknown value to an `Error` instance, converting it if needed.
  *
  * @param e - unknown value to treat as an error.
- * @returns `e` unchanged if already an Error, otherwise converts `e` to an Error.
+ * @returns `e` unchanged if already an `Error`, otherwise converts `e` to an `Error` and sets `e` as the cause.
+ *
+ * In general, `safeTry` is more ergonomic than using this function directly.
  *
  * @example
+ * ```typescript
+ * try {
+ *   ...
  * } catch (e: unknown) {
- *   // err is guaranteed to be an Error instance
  *   const err = coerceError(e);
+ *   console.assert(err instanceof Error);
  * }
+ * ```
  */
 export function coerceError(e: unknown): Error {
   if (e instanceof Error) {
