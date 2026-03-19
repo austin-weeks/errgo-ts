@@ -1,40 +1,42 @@
 import { coerceError } from "./coerce-error";
 
 /**
- * Executes a provided action, catching and re-throwing any errors with the provided additional context.
- * This function mimics Go's fmt.errorf wrapping pattern and preserves the original error
- * in the cause chain. Supports both synchronous and asynchronous actions.
+ * Execute a function while catching and re-throwing any errors with the provided context message.
  *
- * @param errorContext - descriptive message to prefix re-thrown errors
- * @param action - the action to execute that may throw an error
- * @returns `action`'s return value
- * @throws errors thrown by `action` wrapped in the provided context
+ * Supports both sync and async functions.
+ *
+ * @param errorContext - message prefix for re-thrown errors
+ * @param fn - function to execute
+ * @returns the function's return value
+ * @throws errors thrown by the function, wrapped in the provided context
+ *
  * @example
- * // Instead of a verbose try-catch block...
+ *
+ * _This..._
+ * ```typescript
+ * const data = propagateError("Failed to get data", () => getData());
+ * ```
+ * _...is equivalent to this..._
+ * ```typescript
  * let data;
  * try {
  *   data = getData();
  * } catch (e) {
  *   throw new Error("Failed to get data", { cause: e });
  * }
- *
- * // ...use propagateError for more declarative code
- * const data = propagateError("Failed to get data", () => {
- *   return getData();
- * });
- *
+ * ```
  */
-export function propagateError<T>(errorContext: string, action: () => T): T;
+export function propagateError<T>(errorContext: string, fn: () => T): T;
 export function propagateError<T>(
   errorContext: string,
-  action: () => Promise<T>
+  fn: () => Promise<T>
 ): Promise<T>;
 export function propagateError<T>(
   errorContext: string,
-  action: () => T | Promise<T>
+  fn: () => T | Promise<T>
 ): T | Promise<T> {
   try {
-    const result = action();
+    const result = fn();
     if (result instanceof Promise) {
       return result.then(
         (val) => val,

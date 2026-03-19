@@ -18,47 +18,49 @@ function executeDefers(queue: DeferredCallback[]) {
 }
 
 /**
- * Executes a scoped function with deferred actions, returning a `Result` object.
+ * Executes a scoped function with deferrable actions, returning a `Result` object.
  *
  * Deferred actions are executed in FIFO order after the scope completes.
- * If any deferred function throws, the error is printed to the console and remaining defers continue to execute.
+ * If any deferred action throws, the error is logged with `console.warn` and remaining defers continue to execute.
  *
- * *This function will ***never*** throw.*
+ * *`scope.safe` will ***never*** throw.*
  *
- * @param fn - The sync or async function to execute. It is passed a `defer` function that can be used to register callbacks to be executed when the scope terminates.
- * @returns `Result` object containing your function's returned value if successful, or an error if it throws.
+ * @param codeScope - The scoped function execute. It is passed a `defer` function that can be used to register callbacks that will be executed when the scope terminates.
  *
- * Other versions:
+ * Other `scope` variations:
  * @see {@link throwing scope.throwing}
  * @see {@link handled scope.handled}
  *
  * @example
+ * ```typescript
  * const result = scope.safe((defer) => {
  *   console.log("Start");
- *   defer(() => console.log("Cleanup 1"));
- *   defer(() => console.log("Cleanup 2"));
+ *   defer(() => console.log("Cleanup"));
  *   console.log("Doing work...");
  *   return "OK";
  * });
  * if (!result.err) {
  *   console.log("Result:", result.val);
  * }
+ * ```
  *
- * // Output:
- * // Start
- * // Doing work...
- * // Cleanup 1
- * // Cleanup 2
- * // Result: OK
+ * **Output:**
+ *
+ * ```text
+ * Start
+ * Doing work...
+ * Cleanup
+ * Result: OK
+ * ```
  */
-export function safe<T>(fn: (defer: Defer) => NotPromise<T>): Result<T>;
-export function safe<T>(fn: (defer: Defer) => Promise<T>): Promise<Result<T>>;
+export function safe<T>(codeScope: (defer: Defer) => NotPromise<T>): Result<T>;
+export function safe<T>(codeScope: (defer: Defer) => Promise<T>): Promise<Result<T>>;
 export function safe<T>(
-  fn: (defer: Defer) => T | Promise<T>
+  codeScope: (defer: Defer) => T | Promise<T>
 ): Result<T> | Promise<Result<T>> {
   const deferQueue: DeferredCallback[] = [];
   try {
-    const res = fn((fn) => deferQueue.push(fn));
+    const res = codeScope((fn) => deferQueue.push(fn));
     if (res instanceof Promise) {
       return res.then(
         (v) => {
@@ -81,50 +83,50 @@ export function safe<T>(
 }
 
 /**
- * Executes a scoped function with deferred actions, re-throwing any errors.
+ * Executes a scoped function with deferrable actions, re-throwing any errors.
  *
  * Deferred actions are executed in FIFO order after the scope completes.
- * If any deferred function throws, the error is printed to the console and remaining defers continue to execute.
+ * If any deferred action throws, the error is logged with `console.warn` and remaining defers continue to execute.
  *
- * *This function ***will*** throw if the scope throws.
+ * @param codeScope - The scoped function execute. It is passed a `defer` function that can be used to register callbacks that will be executed when the scope terminates.
+ * @returns the scoped function's return value
+ * @throws errors thrown by the scoped function
  *
- * @param fn - The sync or async function to execute. It is passed a `defer` function that can be used to register callbacks to be executed when the scope terminates.
- * @returns your function's return value
- * @throws if your function throws
- *
- * Other versions:
+ * Other `scope` variations:
  * @see {@link safe scope.safe}
  * @see {@link handled scope.handled}
  *
  * @example
+ * ```typescript
  * try {
  *   const data = scope.throwing((defer) => {
  *     console.log("Start");
- *     defer(() => console.log("Cleanup 1"));
- *     defer(() => console.log("Cleanup 2"));
+ *     defer(() => console.log("Cleanup"));
  *     console.log("Doing work...");
- *     console.log("Something goes wrong")
- *     throw new Error("ERROR");
+ *     throw new Error("uh oh!");
  *   });
  *   console.log("Result:", data);
  * } catch (e) {
  *   console.error("Caught:", e);
  * }
+ * ```
  *
- * // Output:
- * // Start
- * // Doing work...
- * // Something goes wrong
- * // Cleanup 1
- * // Cleanup 2
- * // Caught: ERROR
+ * **Output:**
+ * ```text
+ * Start
+ * Doing work...
+ * Cleanup
+ * Caught: uh oh!
+ * ```
  */
-export function throwing<T>(fn: (defer: Defer) => NotPromise<T>): T;
-export function throwing<T>(fn: (defer: Defer) => Promise<T>): Promise<T>;
-export function throwing<T>(fn: (defer: Defer) => T | Promise<T>): T | Promise<T> {
+export function throwing<T>(codeScope: (defer: Defer) => NotPromise<T>): T;
+export function throwing<T>(codeScope: (defer: Defer) => Promise<T>): Promise<T>;
+export function throwing<T>(
+  codeScope: (defer: Defer) => T | Promise<T>
+): T | Promise<T> {
   const deferQueue: DeferredCallback[] = [];
   try {
-    const res = fn((fn) => deferQueue.push(fn));
+    const res = codeScope((fn) => deferQueue.push(fn));
     if (res instanceof Promise) {
       return res.then(
         (v) => {
@@ -147,56 +149,56 @@ export function throwing<T>(fn: (defer: Defer) => T | Promise<T>): T | Promise<T
 }
 
 /**
- * Executes a scoped function with deferred actions, calling an error handler on failure.
+ * Executes a scoped function with deferrable actions, calling an error handler on failure.
  *
  * Deferred actions are executed in FIFO order after the scope completes.
- * If any deferred function throws, the error is printed to the console and remaining defers continue to execute.
+ * If any deferred action throws, the error is logged with `console.warn` and remaining defers continue to execute.
  *
- * *This function will ***never*** throw.*
+ * *`scope.handled` will ***never*** throw.*
  *
  * @param onError - callback executed if an error is thrown
- * @param fn - The sync or async function to execute. It is passed a `defer` function that can be used to register callbacks to be executed when the scope terminates.
+ * @param codeScope - The scoped function execute. It is passed a `defer` function that can be used to register callbacks that will be executed when the scope terminates.
  *
- * Other versions:
+ * Other `scope` variations:
  * @see {@link safe scope.safe}
  * @see {@link throwing scope.throwing}
  *
  * @example
+ * ```typescript
  * scope.handled(
  *   (err) => console.error("Error in scope:", err),
  *   (defer) => {
  *     console.log("Start");
- *     defer(() => console.log("Cleanup 1"));
- *     defer(() => console.log("Cleanup 2"));
+ *     defer(() => console.log("Cleanup"));
  *     console.log("Doing work...");
- *     console.log("Something goes wrong")
- *     throw new Error("ERROR");
+ *     throw new Error("uh oh!");
  *   }
  * );
+ * ```
  *
- * // Output:
- * // Start
- * // Doing work...
- * // Something goes wrong
- * // Cleanup 1
- * // Cleanup 2
- * // Error in scope: ERROR
+ * **Output:**
+ * ```text
+ * Start
+ * Doing work...
+ * Cleanup
+ * Error in scope: uh oh!
+ * ```
  */
 export function handled(
   onError: (e: Error) => void,
-  fn: (defer: Defer) => NotPromise<void>
+  codeScope: (defer: Defer) => NotPromise<void>
 ): void;
 export function handled(
   onError: (e: Error) => void,
-  fn: (defer: Defer) => Promise<void>
+  codeScope: (defer: Defer) => Promise<void>
 ): Promise<void>;
 export function handled(
   onError: (e: Error) => void,
-  fn: (defer: Defer) => void | Promise<void>
+  codeScope: (defer: Defer) => void | Promise<void>
 ): void | Promise<void> {
   const deferQueue: DeferredCallback[] = [];
   try {
-    const res = fn((fn) => deferQueue.push(fn));
+    const res = codeScope((fn) => deferQueue.push(fn));
     if (res instanceof Promise) {
       return res.then(
         (_) => {
@@ -217,12 +219,14 @@ export function handled(
 }
 
 /**
- * Execute functions with deferred actions.
+ * Execute a scoped function with deferrable actions.
  *
- * Available execution modes:
- * - `safe` - wraps errors in a `Result` type
- * - `throwing` - re-throws errors from the scope
- * - `handled` - passes errors to a provided callback function
+ * All variations support both sync and async scoped functions.
+ *
+ * Available Variations:
+ * - `safe` - wraps errors in a `Result`
+ * - `throwing` - re-throws errors
+ * - `handled` - passes errors to an `onError` callback
  */
 export default {
   safe,
