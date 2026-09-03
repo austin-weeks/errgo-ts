@@ -7,6 +7,9 @@
 
 _Forgo your error woes with errgo's ergonomic error handling!_
 
+> [!WARNING]
+> This library has been archived. Please see [`austin-weeks/crabuccino`](https://github.com/austin-weeks/crabuccino) for an improved version!
+
 # `errgo-ts`
 
 A lightweight TypeScript library for ergonomic error handling, inspired by Go and Rust.
@@ -43,7 +46,7 @@ doSomethingWithData(data);
 
 ## Why wouldn't I use this?
 
-_You want to entirely avoid `try/catch` blocks and native JavaScript error handling._ If that's your goal, try something like [`neverthrow`](https://github.com/supermacro/neverthrow).
+_You want to entirely avoid `try/catch` blocks and native JavaScript error handling._ If that's your goal, try [`crabuccino`](https://github.com/austin-weeks/crabuccino).
 
 _Your application needs maximum performance._ There is a small amount of overhead with most of `errgo-ts`'s functions, namely the allocation of closures. That said, it's JavaScript. If you're that concerned about performance, you should probably be using a different language.
 
